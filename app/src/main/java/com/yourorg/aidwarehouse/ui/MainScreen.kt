@@ -23,7 +23,7 @@ fun MainScreen(viewModel: ProductViewModel) {
                     Text(product.name, modifier = Modifier.padding(16.dp))
                 }
             }
-            // Вкладка для додавання нового продукту
+            // "+" вкладка для додавання нового продукту
             Tab(
                 selected = selectedTab == products.size,
                 onClick = { selectedTab = products.size }
@@ -48,7 +48,8 @@ fun MainScreen(viewModel: ProductViewModel) {
                     if (newName.isNotBlank()) {
                         viewModel.addProduct(newName.trim())
                         newName = ""
-                        selectedTab = products.lastIndex
+                        // Переходимо до щойно створеної вкладки
+                        selectedTab = products.size
                     }
                 }) {
                     Text("Додати продукт")
@@ -58,11 +59,11 @@ fun MainScreen(viewModel: ProductViewModel) {
             // Детальний екран обраного продукту
             ProductDetailScreen(
                 product = products[selectedTab],
-                onAddToStock = { amount -> viewModel.addToStock(selectedTab, amount) },
-                onSend = { amount -> viewModel.sendProduct(selectedTab, amount) },
-                onRequestMore = { amount -> viewModel.increaseRequest(selectedTab, amount) },
-                onPrint = { amount -> viewModel.printProduct(selectedTab, amount) },
-                onReset = { viewModel.resetProduct(selectedTab) }
+                onAddToStock   = { amt -> viewModel.addToStock(selectedTab, amt) },
+                onSend         = { amt -> viewModel.sendProduct(selectedTab, amt) },
+                onRequestMore  = { amt -> viewModel.increaseRequest(selectedTab, amt) },
+                onPrint        = { amt -> viewModel.printProduct(selectedTab, amt) },
+                onReset        = { viewModel.resetProduct(selectedTab) }
             )
         }
     }
