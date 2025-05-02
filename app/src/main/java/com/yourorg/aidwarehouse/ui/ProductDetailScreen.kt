@@ -5,9 +5,9 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.yourorg.aidwarehouse.data.Product
-import com.yourorg.aidwarehouse.viewmodel.ProductViewModel
 
 @Composable
 fun ProductDetailScreen(
@@ -16,7 +16,9 @@ fun ProductDetailScreen(
     onSend: (Int) -> Unit,
     onRequestMore: (Int) -> Unit,
     onPrint: (Int) -> Unit,
-    onReset: () -> Unit
+    onReject: (Int) -> Unit,
+    onReset: () -> Unit,
+    totalSent: Int
 ) {
     var amountText by remember { mutableStateOf("0") }
     var showDialog by remember { mutableStateOf(false) }
@@ -25,7 +27,7 @@ fun ProductDetailScreen(
         AlertDialog(
             onDismissRequest = { showDialog = false },
             title = { Text("Підтвердження") },
-            text = { Text("Дійсно очистити всі лічильники?") },
+            text = { Text("Очистити всі лічильники?") },
             confirmButton = {
                 TextButton(onClick = {
                     onReset()
@@ -38,49 +40,74 @@ fun ProductDetailScreen(
         )
     }
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp),
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = product.name, style = MaterialTheme.typography.h5)
-        Spacer(modifier = Modifier.height(16.dp))
+        Text(product.name, style = MaterialTheme.typography.h5)
+        Spacer(Modifier.height(16.dp))
 
-        // Показники
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text("На складі: ${product.stock}")
-            Text("Запит: ${product.request}")
-            Text("В друк: ${product.printed}")
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text("На складі: ${product.stock}", color = Color(0xFF4CAF50))
+            Text("Запит: ${product.request}", color = Color(0xFF2196F3))
+            Text("Друкується: ${product.printed}", color = Color(0xFF9C27B0))
         }
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(Modifier.height(16.dp))
 
-        // Поле для кількості
         OutlinedTextField(
             value = amountText,
-            onValueChange = { amountText = it.filter { ch -> ch.isDigit() } },
+            onValueChange = { amountText = it.filter(Char::isDigit) },
             label = { Text("Кількість") },
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(Modifier.height(16.dp))
 
-        // Кнопки дій
-        Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Button(onClick = { amountText.toIntOrNull()?.let(onAddToStock) }) {
-                Text("На склад")
-            }
-            Button(onClick = { amountText.toIntOrNull()?.let(onSend) }) {
-                Text("Відправлено")
-            }
-            Button(onClick = { amountText.toIntOrNull()?.let(onRequestMore) }) {
-                Text("Ще запит")
-            }
-            Button(onClick = { amountText.toIntOrNull()?.let(onPrint) }) {
-                Text("В друк")
-            }
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Button(
+                onClick = { amountText.toIntOrNull()?.let(onAddToStock) },
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF4CAF50))
+            ) { Text("На склад") }
+
+            Button(
+                onClick = { amountText.toIntOrNull()?.let(onSend) },
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFFF9800))
+            ) { Text("Відправлено") }
+
+            Button(
+                onClick = { amountText.toIntOrNull()?.let(onRequestMore) },
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF2196F3))
+            ) { Text("Ще запит") }
+
+            Button(
+                onClick = { amountText.toIntOrNull()?.let(onPrint) },
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF9C27B0))
+            ) { Text("Друкується") }
+
+            Button(
+                onClick = { amountText.toIntOrNull()?.let(onReject) },
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red)
+            ) { Text("Брак") }
+
             OutlinedButton(onClick = { showDialog = true }) {
                 Text("Обнулити")
             }
         }
+
+        Spacer(Modifier.height(24.dp))
+        Text(
+            "Всього відправлено: $totalSent",
+            style = MaterialTheme.typography.h6,
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            color = Color(0xFFFF9800)
+        )
     }
 }
