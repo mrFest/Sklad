@@ -29,7 +29,7 @@ jobs:
 
       # 4) Зібрати Debug APK
       - name: Build Debug APK
-        run: gradle assembleDebug
+        run: gradle :app:assembleDebug
 
       # 5) Завантажити зібраний APK як артефакт
       - name: Upload APK artifact
