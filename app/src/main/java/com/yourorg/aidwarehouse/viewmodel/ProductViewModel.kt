@@ -7,22 +7,17 @@ import kotlinx.coroutines.flow.asStateFlow
 import com.yourorg.aidwarehouse.data.Product
 
 class ProductViewModel : ViewModel() {
-    // Список усіх продуктів
     private val _products = MutableStateFlow<List<Product>>(emptyList())
     val products: StateFlow<List<Product>> = _products.asStateFlow()
 
-    /** Додає новий продукт з назвою [name] */
     fun addProduct(name: String) {
-        val newList = _products.value + Product(name = name)
-        _products.value = newList
+        _products.value = _products.value + Product(name = name)
     }
 
-    /** Додає [amount] на склад (stock) */
     fun addToStock(index: Int, amount: Int) {
         changeProduct(index) { it.copy(stock = it.stock + amount, printed = it.printed - amount) }
     }
 
-    /** Відправляє [amount]: зменшує stock і request */
     fun sendProduct(index: Int, amount: Int) {
         changeProduct(index) {
             it.copy(
@@ -32,26 +27,27 @@ class ProductViewModel : ViewModel() {
         }
     }
 
-    /** Збільшує запит (request) на [amount] */
     fun increaseRequest(index: Int, amount: Int) {
         changeProduct(index) { it.copy(request = it.request + amount) }
     }
 
-    /** Відправляє на друк/виробництво — збільшує printed */
     fun printProduct(index: Int, amount: Int) {
         changeProduct(index) { it.copy(printed = it.printed + amount) }
     }
 
-    /** Скидає всі лічильники цього продукту */
+    /** Позначити [amount] як брак — відняти від printed */
+    fun rejectPrinted(index: Int, amount: Int) {
+        changeProduct(index) {
+            it.copy(printed = (it.printed - amount).coerceAtLeast(0))
+        }
+    }
+
     fun resetProduct(index: Int) {
         changeProduct(index) { Product(name = it.name) }
     }
 
-    /** Підсумок: всього відправлено на друк усіх продуктів */
-    fun totalPrinted(): Int =
-        _products.value.sumOf { it.printed }
+    fun totalPrinted(): Int = _products.value.sumOf { it.printed }
 
-    // Допоміжна функція для оновлення одного елемента
     private fun changeProduct(index: Int, block: (Product) -> Product) {
         val list = _products.value.toMutableList()
         list[index] = block(list[index])
