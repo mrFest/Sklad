@@ -21,12 +21,12 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      # 3) Завантажити та налаштувати Gradle 8.1.0
-      - name: Download and setup Gradle 8.1.0
+      # 3) Завантажити та налаштувати Gradle 8.14
+      - name: Download and setup Gradle 8.14
         run: |
-          wget https://services.gradle.org/distributions/gradle-8.1.0-bin.zip -P /tmp
-          unzip -qq /tmp/gradle-8.1.0-bin.zip -d $HOME
-          echo "GRADLE_HOME=$HOME/gradle-8.1.0" >> $GITHUB_ENV
+          wget https://services.gradle.org/distributions/gradle-8.14-bin.zip -P /tmp
+          unzip -qq /tmp/gradle-8.14-bin.zip -d $HOME
+          echo "GRADLE_HOME=$HOME/gradle-8.14" >> $GITHUB_ENV
           echo "$HOME/gradle-8.1.0/bin" >> $GITHUB_PATH
 
       # 4) Зібрати Debug APK з модуля app
