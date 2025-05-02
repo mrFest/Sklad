@@ -14,26 +14,28 @@ fun MainScreen(viewModel: ProductViewModel) {
     var newName by remember { mutableStateOf("") }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        // 1) Вкладки
         TabRow(selectedTabIndex = selectedTab) {
-            products.forEachIndexed { idx, p ->
-                Tab(selected = selectedTab == idx,
-                    onClick  = { selectedTab = idx }) {
-                    Text(p.name, modifier = Modifier.padding(16.dp))
+            products.forEachIndexed { idx, product ->
+                Tab(
+                    selected = selectedTab == idx,
+                    onClick = { selectedTab = idx }
+                ) {
+                    Text(product.name, modifier = Modifier.padding(16.dp))
                 }
             }
-            // "+" вкладка
-            Tab(selected = selectedTab == products.size,
-                onClick  = { selectedTab = products.size }) {
+            // Вкладка для додавання нового продукту
+            Tab(
+                selected = selectedTab == products.size,
+                onClick = { selectedTab = products.size }
+            ) {
                 Text("+", modifier = Modifier.padding(16.dp))
             }
         }
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        // 2) Вміст вкладки
         if (selectedTab == products.size) {
-            // Додаємо новий продукт
+            // Форма додавання нового продукту
             Column(modifier = Modifier.padding(16.dp)) {
                 OutlinedTextField(
                     value = newName,
@@ -41,25 +43,27 @@ fun MainScreen(viewModel: ProductViewModel) {
                     label = { Text("Назва виробу") },
                     modifier = Modifier.fillMaxWidth()
                 )
-                Spacer(Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(8.dp))
                 Button(onClick = {
                     if (newName.isNotBlank()) {
                         viewModel.addProduct(newName.trim())
                         newName = ""
-                        selectedTab = products.lastIndex  // переходимо до новоствореної вкладки
+                        selectedTab = products.lastIndex
                     }
                 }) {
                     Text("Додати продукт")
                 }
             }
         } else {
-            // Тимчасово – просто показати назву обраного
-            Text(
-                text = "Продукт: ${products[selectedTab].name}",
-                modifier = Modifier.padding(16.dp),
-                style = MaterialTheme.typography.h6
+            // Детальний екран обраного продукту
+            ProductDetailScreen(
+                product = products[selectedTab],
+                onAddToStock = { amount -> viewModel.addToStock(selectedTab, amount) },
+                onSend = { amount -> viewModel.sendProduct(selectedTab, amount) },
+                onRequestMore = { amount -> viewModel.increaseRequest(selectedTab, amount) },
+                onPrint = { amount -> viewModel.printProduct(selectedTab, amount) },
+                onReset = { viewModel.resetProduct(selectedTab) }
             )
-            // Тут пізніше додамо ProductDetailScreen(...)
         }
     }
 }
