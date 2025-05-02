@@ -20,7 +20,7 @@ fun ProductDetailScreen(
     onReset: () -> Unit,
     totalSent: Int
 ) {
-    var amountText by remember { mutableStateOf("0") }
+    var amountText by remember { mutableStateOf("") }
     var showDialog by remember { mutableStateOf(false) }
 
     if (showDialog) {
@@ -73,27 +73,52 @@ fun ProductDetailScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Button(
-                onClick = { amountText.toIntOrNull()?.let(onAddToStock) },
+                onClick = {
+                    amountText.toIntOrNull()?.let {
+                        onAddToStock(it)
+                        amountText = ""        // очищаємо поле
+                    }
+                },
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF4CAF50))
             ) { Text("На склад") }
 
             Button(
-                onClick = { amountText.toIntOrNull()?.let(onSend) },
+                onClick = {
+                    amountText.toIntOrNull()?.let {
+                        onSend(it)
+                        amountText = ""
+                    }
+                },
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFFF9800))
             ) { Text("Відправлено") }
 
             Button(
-                onClick = { amountText.toIntOrNull()?.let(onRequestMore) },
+                onClick = {
+                    amountText.toIntOrNull()?.let {
+                        onRequestMore(it)
+                        amountText = ""
+                    }
+                },
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF2196F3))
             ) { Text("Ще запит") }
 
             Button(
-                onClick = { amountText.toIntOrNull()?.let(onPrint) },
+                onClick = {
+                    amountText.toIntOrNull()?.let {
+                        onPrint(it)
+                        amountText = ""
+                    }
+                },
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF9C27B0))
             ) { Text("Друкується") }
 
             Button(
-                onClick = { amountText.toIntOrNull()?.let(onReject) },
+                onClick = {
+                    amountText.toIntOrNull()?.let {
+                        onReject(it)
+                        amountText = ""
+                    }
+                },
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red)
             ) { Text("Брак") }
 
@@ -104,9 +129,8 @@ fun ProductDetailScreen(
 
         Spacer(Modifier.height(24.dp))
         Text(
-            "Всього відправлено: $totalSent",
+            text = "Всього відправлено: $totalSent",
             style = MaterialTheme.typography.h6,
-            modifier = Modifier.align(Alignment.CenterHorizontally),
             color = Color(0xFFFF9800)
         )
     }
