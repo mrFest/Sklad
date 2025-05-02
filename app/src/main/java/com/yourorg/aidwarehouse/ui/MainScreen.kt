@@ -14,7 +14,6 @@ fun MainScreen(viewModel: ProductViewModel) {
     var newName by remember { mutableStateOf("") }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        // Вкладки продуктів та додавання
         TabRow(selectedTabIndex = selectedTab) {
             products.forEachIndexed { idx, product ->
                 Tab(
@@ -35,7 +34,6 @@ fun MainScreen(viewModel: ProductViewModel) {
         Spacer(modifier = Modifier.height(16.dp))
 
         if (selectedTab == products.size) {
-            // Форма додавання нового продукту
             Column(modifier = Modifier.padding(16.dp)) {
                 OutlinedTextField(
                     value = newName,
@@ -46,28 +44,25 @@ fun MainScreen(viewModel: ProductViewModel) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Button(onClick = {
                     if (newName.isNotBlank()) {
-                        // Обчислюємо індекс для нової вкладки до додавання
-                        val addIndex = products.size
+                        val idx = products.size
                         viewModel.addProduct(newName.trim())
                         newName = ""
-                        // Переходимо на вкладку з щойно створеним продуктом
-                        selectedTab = addIndex
+                        selectedTab = idx
                     }
                 }) {
                     Text("Додати продукт")
                 }
             }
         } else {
-            // Детальний екран обраного продукту
             ProductDetailScreen(
                 product       = products[selectedTab],
-                onAddToStock  = { amt -> viewModel.addToStock(selectedTab, amt) },
-                onSend        = { amt -> viewModel.sendProduct(selectedTab, amt) },
-                onRequestMore = { amt -> viewModel.increaseRequest(selectedTab, amt) },
-                onPrint       = { amt -> viewModel.printProduct(selectedTab, amt) },
-                onReject      = { amt -> viewModel.rejectPrinted(selectedTab, amt) },
+                onAddToStock  = { viewModel.addToStock(selectedTab, it) },
+                onSend        = { viewModel.sendProduct(selectedTab, it) },
+                onRequestMore = { viewModel.increaseRequest(selectedTab, it) },
+                onPrint       = { viewModel.printProduct(selectedTab, it) },
+                onReject      = { viewModel.rejectPrinted(selectedTab, it) },
                 onReset       = { viewModel.resetProduct(selectedTab) },
-                totalSent     = viewModel.totalPrinted()
+                totalSent     = viewModel.totalSent()
             )
         }
     }
