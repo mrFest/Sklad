@@ -3,7 +3,7 @@
     package="com.yourorg.aidwarehouse">
 
     <application
-        android:label="AidWarehouseApp">
+        android:label="Sklad">
         <activity
             android:name=".MainActivity"
             android:exported="true">
