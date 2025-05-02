@@ -31,9 +31,9 @@ jobs:
         run: ./gradlew assembleDebug
 
       # 5) Завантажити зібраний APK як артефакт
-- name: Upload APK artifact
-  uses: actions/upload-artifact@v4
-  with:
-    name: debug-apk
-    path: app/build/outputs/apk/debug/app-debug.apk
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
 
