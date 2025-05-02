@@ -1,6 +1,5 @@
 name: Android CI
 
-# Коли запускати: на пуші та PR у гілку main
 on:
   push:
     branches: [ main ]
@@ -15,20 +14,22 @@ jobs:
       # 1) Забрати код
       - uses: actions/checkout@v3
 
-      # 2) Встановити JDK (Java 17)
+      # 2) Встановити JDK 17
       - name: Setup JDK 17
         uses: actions/setup-java@v3
         with:
           distribution: temurin
           java-version: 17
 
-      # 3) Дати дозвіл на запуск gradlew
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew
+      # 3) Встановити Gradle з apt
+      - name: Install Gradle
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gradle
 
-      # 4) Запустити збірку Debug APK
+      # 4) Зібрати Debug APK
       - name: Build Debug APK
-        run: ./gradlew assembleDebug
+        run: gradle assembleDebug
 
       # 5) Завантажити зібраний APK як артефакт
       - name: Upload APK artifact
@@ -36,4 +37,3 @@ jobs:
         with:
           name: debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
-
