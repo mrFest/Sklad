@@ -23,6 +23,7 @@ fun MainScreen(viewModel: ProductViewModel) {
                     Text(product.name, modifier = Modifier.padding(16.dp))
                 }
             }
+            // вкладка "+"
             Tab(
                 selected = selectedTab == products.size,
                 onClick = { selectedTab = products.size }
@@ -31,7 +32,7 @@ fun MainScreen(viewModel: ProductViewModel) {
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(Modifier.height(16.dp))
 
         if (selectedTab == products.size) {
             Column(modifier = Modifier.padding(16.dp)) {
@@ -41,7 +42,7 @@ fun MainScreen(viewModel: ProductViewModel) {
                     label = { Text("Назва виробу") },
                     modifier = Modifier.fillMaxWidth()
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(Modifier.height(8.dp))
                 Button(onClick = {
                     if (newName.isNotBlank()) {
                         val idx = products.size
@@ -56,11 +57,9 @@ fun MainScreen(viewModel: ProductViewModel) {
         } else {
             ProductDetailScreen(
                 product       = products[selectedTab],
-                onAddToStock  = { viewModel.addToStock(selectedTab, it) },
-                onSend        = { viewModel.sendProduct(selectedTab, it) },
-                onRequestMore = { viewModel.increaseRequest(selectedTab, it) },
-                onPrint       = { viewModel.printProduct(selectedTab, it) },
-                onReject      = { viewModel.rejectPrinted(selectedTab, it) },
+                onAddToStock  = { amt -> viewModel.addToStock(selectedTab, amt) },
+                onSend        = { amt -> viewModel.sendProduct(selectedTab, amt) },
+                onRequestMore = { amt -> viewModel.increaseRequest(selectedTab, amt) },
                 onReset       = { viewModel.resetProduct(selectedTab) },
                 totalSent     = viewModel.totalSent()
             )
