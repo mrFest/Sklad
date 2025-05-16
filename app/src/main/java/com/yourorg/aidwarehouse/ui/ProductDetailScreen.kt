@@ -15,8 +15,6 @@ fun ProductDetailScreen(
     onAddToStock: (Int) -> Unit,
     onSend: (Int) -> Unit,
     onRequestMore: (Int) -> Unit,
-    onPrint: (Int) -> Unit,
-    onReject: (Int) -> Unit,
     onReset: () -> Unit,
     totalSent: Int
 ) {
@@ -55,7 +53,6 @@ fun ProductDetailScreen(
         ) {
             Text("На складі: ${product.stock}", color = Color(0xFF4CAF50))
             Text("Запит: ${product.request}", color = Color(0xFF2196F3))
-            Text("Друкується: ${product.printed}", color = Color(0xFF9C27B0))
         }
         Spacer(Modifier.height(16.dp))
 
@@ -76,7 +73,7 @@ fun ProductDetailScreen(
                 onClick = {
                     amountText.toIntOrNull()?.let {
                         onAddToStock(it)
-                        amountText = ""        // очищаємо поле
+                        amountText = ""
                     }
                 },
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF4CAF50))
@@ -101,26 +98,6 @@ fun ProductDetailScreen(
                 },
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF2196F3))
             ) { Text("Ще запит") }
-
-            Button(
-                onClick = {
-                    amountText.toIntOrNull()?.let {
-                        onPrint(it)
-                        amountText = ""
-                    }
-                },
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF9C27B0))
-            ) { Text("Друкується") }
-
-            Button(
-                onClick = {
-                    amountText.toIntOrNull()?.let {
-                        onReject(it)
-                        amountText = ""
-                    }
-                },
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red)
-            ) { Text("Брак") }
 
             OutlinedButton(onClick = { showDialog = true }) {
                 Text("Обнулити")
