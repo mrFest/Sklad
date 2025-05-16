@@ -23,7 +23,6 @@ fun MainScreen(viewModel: ProductViewModel) {
                     Text(product.name, modifier = Modifier.padding(16.dp))
                 }
             }
-            // вкладка "+"
             Tab(
                 selected = selectedTab == products.size,
                 onClick = { selectedTab = products.size }
@@ -60,8 +59,7 @@ fun MainScreen(viewModel: ProductViewModel) {
                 onAddToStock  = { amt -> viewModel.addToStock(selectedTab, amt) },
                 onSend        = { amt -> viewModel.sendProduct(selectedTab, amt) },
                 onRequestMore = { amt -> viewModel.increaseRequest(selectedTab, amt) },
-                onReset       = { viewModel.resetProduct(selectedTab) },
-                totalSent     = viewModel.totalSent()
+                onReset       = { viewModel.resetProduct(selectedTab) }
             )
         }
     }
