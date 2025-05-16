@@ -19,10 +19,11 @@ class ProductViewModel(app: Application) : AndroidViewModel(app) {
     val products: StateFlow<List<Product>> = _products.asStateFlow()
 
     init {
-        // автозбереження при кожній зміні списку
         viewModelScope.launch {
             _products.collect { list ->
-                saveProducts(list)
+                prefs.edit()
+                    .putString("products", gson.toJson(list))
+                    .apply()
             }
         }
     }
@@ -33,19 +34,12 @@ class ProductViewModel(app: Application) : AndroidViewModel(app) {
         return gson.fromJson(json, type)
     }
 
-    private fun saveProducts(list: List<Product>) {
-        prefs.edit()
-            .putString("products", gson.toJson(list))
-            .apply()
-    }
-
     fun addProduct(name: String) {
-        val newList = _products.value + Product(name = name)
-        _products.value = newList
+        _products.value = _products.value + Product(name = name)
     }
 
     fun addToStock(index: Int, amount: Int) {
-        change(index) { it.copy(stock = it.stock + amount, printed = it.printed - amount) }
+        change(index) { it.copy(stock = it.stock + amount) }
     }
 
     fun sendProduct(index: Int, amount: Int) {
@@ -53,21 +47,13 @@ class ProductViewModel(app: Application) : AndroidViewModel(app) {
             it.copy(
                 stock = it.stock - amount,
                 request = (it.request - amount).coerceAtLeast(0),
-                sent = it.sent + amount         // збільшуємо лічильник відправлених
+                sent = it.sent + amount
             )
         }
     }
 
     fun increaseRequest(index: Int, amount: Int) {
         change(index) { it.copy(request = it.request + amount) }
-    }
-
-    fun printProduct(index: Int, amount: Int) {
-        change(index) { it.copy(printed = it.printed + amount) }
-    }
-
-    fun rejectPrinted(index: Int, amount: Int) {
-        change(index) { it.copy(printed = (it.printed - amount).coerceAtLeast(0)) }
     }
 
     fun resetProduct(index: Int) {
@@ -78,8 +64,8 @@ class ProductViewModel(app: Application) : AndroidViewModel(app) {
     fun totalSent(): Int = _products.value.sumOf { it.sent }
 
     private fun change(index: Int, block: (Product) -> Product) {
-        val temp = _products.value.toMutableList()
-        temp[index] = block(temp[index])
-        _products.value = temp
+        val tmp = _products.value.toMutableList()
+        tmp[index] = block(tmp[index])
+        _products.value = tmp
     }
 }
