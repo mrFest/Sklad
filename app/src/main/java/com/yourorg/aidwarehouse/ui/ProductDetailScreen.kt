@@ -15,8 +15,7 @@ fun ProductDetailScreen(
     onAddToStock: (Int) -> Unit,
     onSend: (Int) -> Unit,
     onRequestMore: (Int) -> Unit,
-    onReset: () -> Unit,
-    totalSent: Int
+    onReset: () -> Unit
 ) {
     var amountText by remember { mutableStateOf("") }
     var showDialog by remember { mutableStateOf(false) }
@@ -53,6 +52,7 @@ fun ProductDetailScreen(
         ) {
             Text("На складі: ${product.stock}", color = Color(0xFF4CAF50))
             Text("Запит: ${product.request}", color = Color(0xFF2196F3))
+            Text("Відправлено: ${product.sent}", color = Color(0xFFFF9800))
         }
         Spacer(Modifier.height(16.dp))
 
@@ -103,12 +103,5 @@ fun ProductDetailScreen(
                 Text("Обнулити")
             }
         }
-
-        Spacer(Modifier.height(24.dp))
-        Text(
-            text = "Всього відправлено: $totalSent",
-            style = MaterialTheme.typography.h6,
-            color = Color(0xFFFF9800)
-        )
     }
 }
